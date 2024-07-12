@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 
 from src.api.v1 import routes
+from src.models.database import Base, engine
+
+# create tickets db
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(routes.router)

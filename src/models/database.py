@@ -1,16 +1,29 @@
+import logging
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
-from core.config import settings
 
-engine = create_engine(settings.DATABASE_URL, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+from src.core.config import settings
 
-Base = declarative_base()
+logger = logging.getLogger(__name__)
+
+try:
+    engine = create_engine(settings.DATABASE_URL, connect_args={"check_same_thread": False})
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    Base = declarative_base()
+except SQLAlchemyError as e:
+    logger.error(f"Error connecting to the database: {str(e)}")
+    raise
+
 
 def get_db():
     db = SessionLocal()
     try:
         yield db
+    except SQLAlchemyError as e:
+        logger.error(f"Database error: {str(e)}")
+        raise
     finally:
         db.close()
