@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, UUID4
+from pydantic import BaseModel, EmailStr, UUID4, ConfigDict
 from datetime import datetime
 from typing import Optional
 
@@ -28,5 +28,4 @@ class Ticket(TicketBase):
     created_at: datetime
     processed_at: Optional[datetime]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
