@@ -1,4 +1,5 @@
 import uuid
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -40,3 +41,22 @@ def get_ticket(ticket_id: uuid.UUID, db: Session = Depends(get_db)):
     if db_ticket is None:
         raise HTTPException(status_code=404, detail="Ticket not found")
     return db_ticket
+
+
+# todo: page support
+@router.get("/tickets", response_model=List[schemas.Ticket])
+def get_tickets(status: Optional[str] = None,
+                category: Optional[str] = None,
+                priority: Optional[str] = None,
+                db: Session = Depends(get_db)):
+    """
+    filter tickets by status, category and priority
+    """
+    query = db.query(Ticket)
+    if status:
+        query = query.filter(Ticket.status == status)
+    if category:
+        query = query.filter(Ticket.category == category)
+    if priority:
+        query = query.filter(Ticket.priority == priority)
+    return query.all()
