@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from src.models import schemas, ticket
 from src.models.database import get_db
+from src.models.schemas import TicketStatus, TicketCategory, TicketPriority
 from src.models.ticket import Ticket
 
 router = APIRouter(prefix="/v1")
@@ -23,7 +24,7 @@ def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
         subject=data.subject,
         body=data.body,
         customer_email=data.customer_email,
-        status="submitted"
+        status=TicketStatus.SUBMITTED
     )
     db.add(db_ticket)
     db.commit()
@@ -39,15 +40,15 @@ def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
 def get_ticket(ticket_id: uuid.UUID, db: Session = Depends(get_db)):
     db_ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
     if db_ticket is None:
-        raise HTTPException(status_code=404, detail="Ticket not found")
+        raise HTTPException(status_code=404, detail="Ticket %s not found" % ticket_id)
     return db_ticket
 
 
 # todo: page support
 @router.get("/tickets", response_model=List[schemas.Ticket])
-def get_tickets(status: Optional[str] = None,
-                category: Optional[str] = None,
-                priority: Optional[str] = None,
+def get_tickets(status: Optional[TicketStatus] = None,
+                category: Optional[TicketCategory] = None,
+                priority: Optional[TicketPriority] = None,
                 db: Session = Depends(get_db)):
     """
     filter tickets by status, category and priority

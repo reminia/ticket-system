@@ -1,8 +1,11 @@
-from sqlalchemy import Column, String, DateTime
-from sqlalchemy.dialects.postgresql import UUID
-from .database import Base
-from datetime import datetime
 import uuid
+from datetime import datetime
+
+from sqlalchemy import Column, String, DateTime, Enum
+from sqlalchemy.dialects.postgresql import UUID
+
+from .database import Base
+from .schemas import TicketStatus, TicketCategory, TicketPriority
 
 
 class Ticket(Base):
@@ -12,9 +15,9 @@ class Ticket(Base):
     subject = Column(String, index=True)
     body = Column(String)
     customer_email = Column(String)
-    status = Column(String, default="submitted")
-    category = Column(String, nullable=True)
-    priority = Column(String, nullable=True)
+    status = Column(Enum(TicketStatus), default=TicketStatus.SUBMITTED)
+    category = Column(Enum(TicketCategory), nullable=True)
+    priority = Column(Enum(TicketPriority), nullable=True)
     initial_response = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     processed_at = Column(DateTime, nullable=True)
