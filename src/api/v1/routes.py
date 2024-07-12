@@ -1,10 +1,11 @@
 import uuid
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.models import schemas, ticket
 from src.models.database import get_db
+from src.models.ticket import Ticket
 
 router = APIRouter(prefix="/v1")
 
@@ -31,3 +32,11 @@ def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
         "status": "submitted",
         "message": "Ticket submitted successfully and queued for processing"
     }
+
+
+@router.get("/ticket/{ticket_id}", response_model=schemas.Ticket)
+def get_ticket(ticket_id: uuid.UUID, db: Session = Depends(get_db)):
+    db_ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
+    if db_ticket is None:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    return db_ticket
