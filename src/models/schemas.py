@@ -15,7 +15,7 @@ class TicketCreate(TicketBase):
     pass
 
 
-class TicketResponse(BaseModel):
+class TicketCreateResponse(BaseModel):
     ticket_id: UUID4
     status: str
     message: str

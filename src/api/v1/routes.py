@@ -20,7 +20,7 @@ def ping():
     return {"status": "ok", "message": "pong"}
 
 
-@router.post("/ticket", response_model=schemas.TicketResponse, status_code=201)
+@router.post("/ticket", response_model=schemas.TicketCreateResponse, status_code=201)
 def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
     """
     Create a ticket given ticket subject, body and customer email.
