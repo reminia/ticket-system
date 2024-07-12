@@ -27,7 +27,9 @@ jobs:
           pip install poetry
 
       - name: Build
-        run: poetry install && poetry build
+        run: |
+          mv .env.example .env
+          poetry install && poetry build
 
       - name: Run tests
         run: |
