@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+
 from src.main import app
 
 client = TestClient(app)
@@ -14,3 +15,17 @@ def test_v1_ping():
     response = client.get("/v1/ping")
     assert response.status_code == 200
     assert response.json() == {"status": "ok", "message": "pong"}
+
+
+def test_create_ticket():
+    response = client.post("/v1/ticket",
+                           json={
+                               "subject": "Ticket title",
+                               "body": "Ticket body",
+                               "customer_email": "user@example.com"
+                           })
+    assert response.status_code == 201
+    data = response.json()
+    assert data["status"] == "submitted"
+    assert "ticket_id" in data
+    assert "message" in data
