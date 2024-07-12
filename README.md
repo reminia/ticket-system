@@ -1,4 +1,5 @@
 # ticket system
+![CI](https://github.com/reminia/ticket-system/actions/workflows/ci.yml/badge.svg)
 
 Rest api for a support ticket system including submit, query, process ticket.
 

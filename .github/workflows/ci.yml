@@ -27,7 +27,7 @@ jobs:
           pip install poetry
 
       - name: Build
-        run: poetry build
+        run: poetry install && poetry build
 
       - name: Run tests
         run: |
