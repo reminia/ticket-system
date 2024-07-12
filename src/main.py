@@ -6,7 +6,12 @@ from src.models.database import Base, engine
 # create tickets db
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(title="ticket system api",
+              description="Rest api for create, query and process tickets.",
+              version="0.1.0",
+              openapi_url="/openapi.json",
+              docs_url="/docs",  # swagger UI
+              redoc_url="/redoc")  # ReDoc
 app.include_router(routes.router)
 
 
