@@ -12,6 +12,9 @@ app.include_router(routes.router)
 
 @app.get("/ping")
 def root_ping():
+    """
+    Server liveness check.
+    """
     return {"status": "ok", "message": "I'm up!"}
 
 

@@ -14,11 +14,31 @@ router = APIRouter(prefix="/v1")
 
 @router.get("/ping")
 def ping():
+    """
+    /v1 api liveness check
+    """
     return {"status": "ok", "message": "pong"}
 
 
 @router.post("/ticket", response_model=schemas.TicketResponse, status_code=201)
 def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
+    """
+    Create a ticket given ticket subject, body and customer email.
+
+    Parameters:
+    - **request body**: The data required to create a ticket, which includes:
+      - **subject** (str): The subject of the ticket.
+      - **body** (str): The body/content of the ticket.
+      - **customer_email** (str): The email address of the customer creating the ticket.
+
+    Returns:
+    - **ticket_id**: uuid of the ticket.
+    - **status**: Ticket status(submitted by default).
+    - **message**: Ticket submitted successfully and queued for processing.
+
+    Status Code:
+    - **201**: Ticket created successfully.
+    """
     db_ticket = ticket.Ticket(
         id=uuid.uuid4(),
         subject=data.subject,
@@ -38,6 +58,15 @@ def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
 
 @router.get("/ticket/{ticket_id}", response_model=schemas.Ticket)
 def get_ticket(ticket_id: uuid.UUID, db: Session = Depends(get_db)):
+    """
+    Query ticket by ticket id.
+
+    Parameters:
+    - **ticket_id**: The ticket id(uuid).
+
+    Returns:
+    - All fields of the ticket.
+    """
     db_ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
     if db_ticket is None:
         raise HTTPException(status_code=404, detail="Ticket %s not found" % ticket_id)
@@ -54,6 +83,19 @@ def get_tickets(status: Optional[TicketStatus] = None,
                 ):
     """
     Filter tickets by status, category, and priority with pagination support.
+
+    Parameters:
+    - **status**: Filter by ticket status (submitted, processing, processed).
+    - **category**: Filter by ticket category(Account Access, Feature Request, Unknown).
+    - **priority**: Filter by ticket priority(Low, High).
+    - **page**: Page number for pagination (default is 1).
+    - **per_page**: Number of items per page for pagination (default is 50, max is 50).
+
+    Returns:
+    - **total**: Total number of tickets.
+    - **page**: Current page number.
+    - **per_page**: Number of tickets per page.
+    - **items**: List of tickets.
     """
     query = db.query(Ticket)
     if status:
