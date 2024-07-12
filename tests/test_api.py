@@ -29,3 +29,15 @@ def test_create_ticket():
     assert data["status"] == "submitted"
     assert "ticket_id" in data
     assert "message" in data
+
+
+def test_get_ticket():
+    response = client.post("/v1/ticket",
+                           json={
+                               "subject": "Ticket title",
+                               "body": "Ticket body",
+                               "customer_email": "user@example.com"
+                           })
+    ticket_id = response.json()["ticket_id"]
+    query_response = client.get("/v1/ticket/%s" % ticket_id)
+    assert query_response.status_code == 200
