@@ -16,6 +16,7 @@ rq = "^1.16.2"
 python-dotenv = "^1.0.1"
 anthropic = "^0.31.0"
 redis = "^5.0.7"
+pydantic-settings = "^2.3.4"
 
 
 [tool.poetry.group.dev.dependencies]
