@@ -14,3 +14,4 @@ Rest api for a support ticket system including submit, query, process ticket.
 * build. `poetry build`
 * run. `poetry run uvicorn src.main:app`
 * dev mode. `poetry run uvicorn src.main:app --reload`, reload when codes changed.
+* test. `poetry run pytest`
