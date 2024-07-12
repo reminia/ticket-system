@@ -1,12 +1,12 @@
 import uuid
-from typing import List, Optional
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from src.models import schemas, ticket
 from src.models.database import get_db
-from src.models.schemas import TicketStatus, TicketCategory, TicketPriority
+from src.models.schemas import TicketStatus, TicketCategory, TicketPriority, PaginatedTickets
 from src.models.ticket import Ticket
 
 router = APIRouter(prefix="/v1")
@@ -44,14 +44,16 @@ def get_ticket(ticket_id: uuid.UUID, db: Session = Depends(get_db)):
     return db_ticket
 
 
-# todo: page support
-@router.get("/tickets", response_model=List[schemas.Ticket])
+@router.get("/tickets", response_model=PaginatedTickets)
 def get_tickets(status: Optional[TicketStatus] = None,
                 category: Optional[TicketCategory] = None,
                 priority: Optional[TicketPriority] = None,
-                db: Session = Depends(get_db)):
+                db: Session = Depends(get_db),
+                page: int = Query(1, ge=1),  # Default page is 1, must be >= 1
+                per_page: int = Query(50, gt=0, le=50)  # Default per_page is 50, max is 50
+                ):
     """
-    filter tickets by status, category and priority
+    Filter tickets by status, category, and priority with pagination support.
     """
     query = db.query(Ticket)
     if status:
@@ -60,4 +62,16 @@ def get_tickets(status: Optional[TicketStatus] = None,
         query = query.filter(Ticket.category == category)
     if priority:
         query = query.filter(Ticket.priority == priority)
-    return query.all()
+
+    # Calculate the offset
+    offset = (page - 1) * per_page
+
+    # Apply limit and offset for pagination
+    tickets = query.offset(offset).limit(per_page).all()
+
+    return {
+        "tickets": tickets,
+        "total": len(tickets),
+        "page": page,
+        "per_page": per_page
+    }

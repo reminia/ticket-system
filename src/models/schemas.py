@@ -1,6 +1,6 @@
 from enum import Enum
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr, UUID4, ConfigDict
 
@@ -48,3 +48,10 @@ class Ticket(TicketBase):
     processed_at: Optional[datetime]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class PaginatedTickets(BaseModel):
+    tickets: List[Ticket]
+    total: int
+    page: int
+    per_page: int
