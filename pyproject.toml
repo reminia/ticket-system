@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "rest api for ticket system"
 authors = ["sleefd <sleefd@gmail.com>"]
 readme = "README.md"
+packages = [{ include = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
