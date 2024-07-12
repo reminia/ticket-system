@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 
+from src.api.v1 import routes
+
 app = FastAPI()
+app.include_router(routes.router)
 
 
 @app.get("/ping")
