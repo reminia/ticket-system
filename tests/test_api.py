@@ -11,12 +11,6 @@ def test_root_ping():
     assert response.json() == {"status": "ok", "message": "I'm up!"}
 
 
-def test_v1_ping():
-    response = client.get("/v1/ping")
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok", "message": "pong"}
-
-
 def test_create_ticket():
     response = client.post("/v1/ticket",
                            json={

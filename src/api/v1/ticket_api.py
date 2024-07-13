@@ -13,14 +13,6 @@ from src.models.ticket import Ticket
 router = APIRouter(prefix="/v1")
 
 
-@router.get("/ping")
-def ping():
-    """
-    /v1 api liveness check
-    """
-    return {"status": "ok", "message": "pong"}
-
-
 @router.post("/ticket", response_model=schemas.TicketCreateResponse, status_code=201)
 def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
     """
