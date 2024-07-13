@@ -1,37 +1,29 @@
-from rq import Queue
+from typing import List
+from uuid import UUID
+
 from redis import Redis
-import anthropic
-from src.models.database import SessionLocal
-from src.models.ticket import Ticket
-from datetime import datetime
+from rq import Queue
+from rq.job import Job
+
 from src.core.config import settings
 
 redis_conn = Redis.from_url(settings.REDIS_URL)
-q = Queue(connection=redis_conn)
-
-client = anthropic.Client(api_key=settings.ANTHROPIC_API_KEY)
+queue = Queue(connection=redis_conn)
 
 
-def process_ticket(ticket_id: int):
-    db = SessionLocal()
-    ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
-
-    if ticket and ticket.status == "unprocessed":
-        prompt = f"Categorize the following support ticket:\nTitle: {ticket.title}\nDescription: {ticket.description}\n\nCategory:"
-        response = client.completions.create(
-            model="claude-3-opus-20240229",
-            prompt=prompt,
-            max_tokens_to_sample=100,
-        )
-        category = response.completion.strip()
-
-        ticket.status = "processed"
-        ticket.category = category
-        ticket.processed_at = datetime.utcnow()
-        db.commit()
-
-    db.close()
+# todo: update ticket status in db & process ticket with ai
+def process_ticket(ticket_id: UUID):
+    pass
 
 
-def enqueue_ticket(ticket_id: int):
-    q.enqueue(process_ticket, ticket_id)
+def process_tickets(tickets: List[UUID]):
+    for ticket in tickets:
+        process_ticket(ticket)
+
+
+def enqueue_ticket(ticket_id: UUID) -> Job:
+    return queue.enqueue(process_ticket, ticket_id)
+
+
+def enqueue_tickets(tickets: List[UUID]) -> Job:
+    return queue.enqueue(process_tickets, tickets)

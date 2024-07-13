@@ -1,5 +1,5 @@
-from enum import Enum
 from datetime import datetime
+from enum import Enum
 from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr, UUID4, ConfigDict
@@ -44,6 +44,8 @@ class Ticket(TicketBase):
     category: Optional[TicketCategory]
     priority: Optional[TicketPriority]
     initial_response: Optional[str]
+    category_confidence: Optional[float]
+    priority_confidence: Optional[float]
     created_at: datetime
     processed_at: Optional[datetime]
 
@@ -55,3 +57,8 @@ class PaginatedTickets(BaseModel):
     total: int
     page: int
     per_page: int
+
+
+class TicketProcess(BaseModel):
+    message: str
+    job_id: UUID4

@@ -1,7 +1,7 @@
 # ticket system
 ![CI](https://github.com/reminia/ticket-system/actions/workflows/ci.yml/badge.svg)
 
-Rest api for a support ticket system including submit, query, process ticket.
+Rest api for a support ticket system including submit, query, process tickets.
 
 ## tech stack
 
@@ -9,6 +9,11 @@ Rest api for a support ticket system including submit, query, process ticket.
 * rq for task queue
 * sqlalchemy and pydantic for ORM & data validation
 * sqlite as database
+
+## setup
+
+* install redis using docker by `docker run --name my-redis -p 6379:6379 -d redis`.
+* setup env variables, please refer to the [env](.env.example) file.
 
 ## build & run
 

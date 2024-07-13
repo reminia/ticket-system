@@ -4,9 +4,10 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from src.core.worker import enqueue_tickets, enqueue_ticket
 from src.models import schemas, ticket
 from src.models.database import get_db
-from src.models.schemas import TicketStatus, TicketCategory, TicketPriority, PaginatedTickets
+from src.models.schemas import TicketStatus, TicketCategory, TicketPriority, PaginatedTickets, TicketProcess
 from src.models.ticket import Ticket
 
 router = APIRouter(prefix="/v1")
@@ -49,6 +50,7 @@ def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
     db.add(db_ticket)
     db.commit()
     db.refresh(db_ticket)
+    enqueue_ticket(db_ticket.id)
     return {
         "ticket_id": db_ticket.id,
         "status": "submitted",
@@ -117,3 +119,18 @@ def get_tickets(status: Optional[TicketStatus] = None,
         "page": page,
         "per_page": per_page
     }
+
+
+@router.post("/process", response_model=TicketProcess)
+def process_tickets(db: Session = Depends(get_db)):
+    """manually trigger process of all unprocessed tickets"""
+    unprocessed_tickets = db.query(Ticket).filter(Ticket.status == TicketStatus.SUBMITTED).all()
+    if not unprocessed_tickets:
+        return TicketProcess(message="No tickets to process", job_id="")
+
+    tickets = [ticket.id for ticket in unprocessed_tickets]
+    job = enqueue_tickets(tickets)
+    return TicketProcess(
+        message=f"Processing started for {len(unprocessed_tickets)} tickets",
+        job_id=job.id
+    )
