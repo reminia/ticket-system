@@ -62,3 +62,10 @@ class PaginatedTickets(BaseModel):
 class TicketProcess(BaseModel):
     message: str
     job_id: UUID4
+
+
+class TicketClassified(BaseModel):
+    category: TicketCategory
+    priority: TicketPriority
+    category_confidence: float
+    priority_confidence: float
