@@ -31,6 +31,7 @@ Rest api for a support ticket system including submit, query, process tickets.
     -  start rq worker:
     ```bash
         pip install rq
+        poetry shell
         rq worker -u redis://localhost:6379
     ```
 * dev mode: `poetry run uvicorn src.main:app --reload`, reload when codes changed.
