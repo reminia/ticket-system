@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.api.v1 import routes
+from src.api.v1 import ticket_api
 from src.models.database import Base, engine
 
 # create tickets db
@@ -12,7 +12,7 @@ app = FastAPI(title="ticket system api",
               openapi_url="/openapi.json",
               docs_url="/docs",  # swagger UI
               redoc_url="/redoc")  # ReDoc
-app.include_router(routes.router)
+app.include_router(ticket_api.router)
 
 
 @app.get("/ping")
