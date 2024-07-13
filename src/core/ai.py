@@ -18,7 +18,7 @@ def categorize_prioritize_ticket(ticket: Ticket) -> TicketClassified:
     Finally, provide a confidence level (0.0 to 1.0) for both the category and priority.
 
     Ticket Subject: {ticket.subject}
-    Ticket Content: {ticket.content}
+    Ticket Content: {ticket.body}
 
     Respond with a JSON object in the following format:
     {{
@@ -27,7 +27,7 @@ def categorize_prioritize_ticket(ticket: Ticket) -> TicketClassified:
         "priority": "Priority level",
         "priority_confidence": 0.0
     }}
-
+    
     Ensure the JSON is valid and contains only the specified fields.
     """
     logger.info("Classify ticket by claudAI")
@@ -38,6 +38,7 @@ def categorize_prioritize_ticket(ticket: Ticket) -> TicketClassified:
             max_tokens_to_sample=200,
             temperature=0,
         )
+        # todo: check claudAI response error
         return TicketClassified.parse_raw(response.completion.strip())
     except Exception as e:
         logging.error(f"classify ticket {ticket.id} failed: {e}")
