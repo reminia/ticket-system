@@ -8,7 +8,7 @@ from src.core.worker import enqueue_tickets, enqueue_ticket
 from src.models import schemas, ticket
 from src.models.database import get_db
 from src.models.schemas import TicketStatus, TicketCategory, TicketPriority, PaginatedTickets, TicketProcess
-from src.models.ticket import Ticket
+from src.models.ticket import Ticket, save_ticket, get_ticket as query_ticket, filter_ticket, filter_ticket_status
 
 router = APIRouter(prefix="/v1")
 
@@ -39,9 +39,7 @@ def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
         customer_email=data.customer_email,
         status=TicketStatus.SUBMITTED
     )
-    db.add(db_ticket)
-    db.commit()
-    db.refresh(db_ticket)
+    save_ticket(db, db_ticket)
     enqueue_ticket(db_ticket.id)
     return {
         "ticket_id": db_ticket.id,
@@ -61,7 +59,7 @@ def get_ticket(ticket_id: uuid.UUID, db: Session = Depends(get_db)):
     Returns:
     - All fields of the ticket.
     """
-    db_ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
+    db_ticket = query_ticket(db, ticket_id)
     if db_ticket is None:
         raise HTTPException(status_code=404, detail="Ticket %s not found" % ticket_id)
     return db_ticket
@@ -91,20 +89,7 @@ def get_tickets(status: Optional[TicketStatus] = None,
     - **per_page**: Number of tickets per page.
     - **tickets**: List of tickets.
     """
-    query = db.query(Ticket)
-    if status:
-        query = query.filter(Ticket.status == status)
-    if category:
-        query = query.filter(Ticket.category == category)
-    if priority:
-        query = query.filter(Ticket.priority == priority)
-
-    # Calculate the offset
-    offset = (page - 1) * per_page
-
-    # Apply limit and offset for pagination
-    tickets = query.offset(offset).limit(per_page).all()
-
+    tickets = filter_ticket(db, page, per_page, status, category, priority)
     return {
         "tickets": tickets,
         "total": len(tickets),
@@ -115,8 +100,8 @@ def get_tickets(status: Optional[TicketStatus] = None,
 
 @router.post("/process", response_model=TicketProcess)
 def process_tickets(db: Session = Depends(get_db)):
-    """manually trigger process of all unprocessed tickets"""
-    unprocessed_tickets = db.query(Ticket).filter(Ticket.status == TicketStatus.SUBMITTED).all()
+    """Manually trigger process of all unprocessed tickets"""
+    unprocessed_tickets = filter_ticket_status(db, TicketStatus.SUBMITTED)
     if not unprocessed_tickets:
         return TicketProcess(message="No tickets to process", job_id="")
 
