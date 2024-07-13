@@ -7,7 +7,7 @@ Rest api for a support ticket system including submit, query, process tickets.
 
 * create ticket.
 * query ticket by ticket id.
-* set ticket priority, category and initial response by AI providers automatically.
+* assign ticket priority, category and initial response by AI providers automatically.
 * filter tickets by status, priority and category.
 * manually trigger ticket processing in queue.
 
