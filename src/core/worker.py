@@ -18,6 +18,7 @@ queue = Queue(connection=redis_conn)
 logger = logging.getLogger(__name__)
 
 
+# todo: get initial response through another ai provider in an async way
 def process_ticket(ticket_id: UUID):
     logger.info(f"Processing ticket with id: {ticket_id}")
     db = get_db()
@@ -45,7 +46,7 @@ def process_ticket(ticket_id: UUID):
 
 def process_tickets(tickets: List[UUID]):
     for ticket in tickets:
-        process_ticket(ticket)
+        queue.enqueue(process_ticket, ticket)
 
 
 def enqueue_ticket(ticket_id: UUID) -> Job:
