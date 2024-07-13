@@ -95,7 +95,7 @@ def get_tickets(status: Optional[TicketStatus] = None,
     - **total**: Total number of tickets.
     - **page**: Current page number.
     - **per_page**: Number of tickets per page.
-    - **items**: List of tickets.
+    - **tickets**: List of tickets.
     """
     query = db.query(Ticket)
     if status:
