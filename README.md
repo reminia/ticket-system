@@ -27,7 +27,7 @@ Rest api for a support ticket system including submit, query, process tickets.
 
 ## build & run
 
-* build: `poetry build`.
+* build: `poetry install && poetry build`.
 * run:
     - `poetry run uvicorn src.main:app`, server will start at `localhost:8000` by default.
     -  start rq worker:
