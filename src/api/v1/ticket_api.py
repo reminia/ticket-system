@@ -8,7 +8,7 @@ from src.core.worker import enqueue_tickets, enqueue_ticket
 from src.models import schemas, ticket
 from src.models.database import get_db
 from src.models.schemas import TicketStatus, TicketCategory, TicketPriority, PaginatedTickets, TicketProcess
-from src.models.ticket import Ticket, save_ticket, get_ticket as query_ticket, filter_ticket, filter_ticket_status
+from src.models.ticket import save_ticket, get_ticket as query_ticket, filter_ticket, filter_ticket_status
 
 router = APIRouter(prefix="/v1")
 
@@ -103,12 +103,9 @@ def process_tickets(db: Session = Depends(get_db)):
     """Manually trigger process of all unprocessed tickets"""
     unprocessed_tickets = filter_ticket_status(db, TicketStatus.SUBMITTED)
     if not unprocessed_tickets:
-        return TicketProcess(message="No tickets to process", job_id="")
-    # todo handle empty tickets
+        raise HTTPException(status_code=404, detail="No tickets remain to be processed")
+
     tickets = [ticket.id for ticket in unprocessed_tickets]
     job = enqueue_tickets(tickets)
-    return TicketProcess(
-        message=f"Processing started for {len(unprocessed_tickets)} tickets",
-        job_id=job.id
-    )
-
+    return TicketProcess(message=f"Processing started for {len(unprocessed_tickets)} tickets",
+                         job_id=job.id)
