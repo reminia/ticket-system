@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     REDIS_URL: str
     ANTHROPIC_API_KEY: str
     OPENAI_API_KEY: str
+    CF_AI_GATEWAY: str
+    CF_AI_TOKEN: str
 
     model_config = SettingsConfigDict(
         env_file=".env",

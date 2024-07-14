@@ -14,9 +14,11 @@ sqlalchemy = "^2.0.31"
 pydantic = "^2.8.2"
 rq = "^1.16.2"
 python-dotenv = "^1.0.1"
-anthropic = "^0.31.0"
 redis = "^5.0.7"
 pydantic-settings = "^2.3.4"
+requests = "^2.32.3"
+langchain = "^0.2.7"
+langchain-anthropic = "^0.1.20"
 
 
 [tool.poetry.group.dev.dependencies]
