@@ -1,15 +1,13 @@
-import logging
-
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
-from langchain_anthropic import ChatAnthropic
 
 from src.core.config import settings
-from src.core.utils import enum2csv
+from src.core.custom_anthropic import CustomChatAnthropic
+from src.core.utils import enum2csv, setup_logger
 from src.models.schemas import TicketClassified, TicketCategory, TicketPriority
 from src.models.ticket import Ticket
 
-logger = logging.getLogger(__name__)
+logger = setup_logger()
 
 classify_prompt = PromptTemplate(
     input_variables=["ticket_subject", "ticket_body", "categories", "priorities"],
@@ -33,13 +31,16 @@ classify_prompt = PromptTemplate(
     """
 )
 
-anthropic_llm = ChatAnthropic(model="claude-3-opus-20240229", api_key=settings.ANTHROPIC_API_KEY)
+anthropic_llm = CustomChatAnthropic(model="claude-3-5-sonnet",
+                                    api_key=settings.ANTHROPIC_API_KEY,
+                                    base_url=settings.API_PROXY_URL,
+                                    max_tokens=100)
 output_parser = PydanticOutputParser(pydantic_object=TicketClassified)
 chain = classify_prompt | anthropic_llm | output_parser
 
 
 def categorize_prioritize_ticket(ticket: Ticket) -> TicketClassified:
-    logger.info("Classify ticket by LangChain")
+    logger.info("Classify ticket by Anthropic llm")
     try:
         chain_input = {
             "ticket_subject": ticket.subject,
@@ -47,7 +48,6 @@ def categorize_prioritize_ticket(ticket: Ticket) -> TicketClassified:
             "categories": enum2csv(TicketCategory, ", "),
             "priorities": enum2csv(TicketPriority, ", ")
         }
-        # Run the chain
         return chain.invoke(chain_input)
     except Exception as e:
         logger.error(f"Classify ticket {ticket.id} failed: {e}")

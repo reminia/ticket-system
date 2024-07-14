@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 from uuid import UUID
 
@@ -33,6 +34,8 @@ def process_ticket(ticket_id: UUID):
             ticket.category_confidence = ticket_classified.category_confidence
             ticket.priority = ticket_classified.priority
             ticket.priority_confidence = ticket_classified.priority_confidence
+            ticket.processed_at = datetime.utcnow()
+            ticket.status = TicketStatus.PROCESSED
 
         logger.info(f"Process ticket {ticket_id} done")
 

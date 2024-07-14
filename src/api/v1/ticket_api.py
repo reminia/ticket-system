@@ -104,10 +104,11 @@ def process_tickets(db: Session = Depends(get_db)):
     unprocessed_tickets = filter_ticket_status(db, TicketStatus.SUBMITTED)
     if not unprocessed_tickets:
         return TicketProcess(message="No tickets to process", job_id="")
-
+    # todo handle empty tickets
     tickets = [ticket.id for ticket in unprocessed_tickets]
     job = enqueue_tickets(tickets)
     return TicketProcess(
         message=f"Processing started for {len(unprocessed_tickets)} tickets",
         job_id=job.id
     )
+
