@@ -9,7 +9,7 @@ from src.core.utils import enum2csv, setup_logger
 from src.models.schemas import TicketClassified, TicketCategory, TicketPriority
 from src.models.ticket import Ticket
 
-logger = setup_logger()
+logger = setup_logger(__name__)
 
 classify_prompt = PromptTemplate(
     input_variables=["ticket_subject", "ticket_body", "categories", "priorities"],

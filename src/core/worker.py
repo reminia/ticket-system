@@ -15,7 +15,7 @@ from src.models.ticket import get_ticket
 
 redis_conn = Redis.from_url(settings.REDIS_URL)
 queue = Queue(connection=redis_conn)
-logger = setup_logger()
+logger = setup_logger(__name__)
 
 
 async def process_ticket(ticket_id: UUID):
