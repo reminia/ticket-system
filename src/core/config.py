@@ -7,7 +7,8 @@ class Settings(BaseSettings):
     REDIS_URL: str
     ANTHROPIC_API_KEY: str
     OPENAI_API_KEY: str
-    API_PROXY_URL: str
+    ANTHROPIC_PROXY_URL: str
+    OPENAI_PROXY_URL: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
