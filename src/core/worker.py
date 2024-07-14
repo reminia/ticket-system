@@ -29,12 +29,15 @@ def process_ticket(ticket_id: UUID):
         logger.info(f"Set ticket {ticket_id} status to PROCESSING")
 
         with db.begin():
-            ticket_classified = categorize_prioritize_ticket(ticket)
+            classify_ticket = categorize_prioritize_ticket(ticket)
+            respond_ticket = craft_ticket_response(ticket)
+            ticket_classified, response = asyncio.gather(classify_ticket, respond_ticket)
             ticket.category = ticket_classified.category
             ticket.category_confidence = ticket_classified.category_confidence
             ticket.priority = ticket_classified.priority
             ticket.priority_confidence = ticket_classified.priority_confidence
             ticket.processed_at = datetime.utcnow()
+            ticket.initial_response = response
             ticket.status = TicketStatus.PROCESSED
 
         logger.info(f"Process ticket {ticket_id} done")

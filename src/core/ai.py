@@ -1,6 +1,7 @@
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
 
+from langchain_openai import ChatOpenAI
 from src.core.config import settings
 from src.core.custom_anthropic import CustomChatAnthropic
 from src.core.utils import enum2csv, setup_logger
@@ -36,10 +37,27 @@ anthropic_llm = CustomChatAnthropic(model="claude-3-5-sonnet",
                                     base_url=settings.API_PROXY_URL,
                                     max_tokens=100)
 output_parser = PydanticOutputParser(pydantic_object=TicketClassified)
-chain = classify_prompt | anthropic_llm | output_parser
+classify_chain = classify_prompt | anthropic_llm | output_parser
+
+response_prompt = PromptTemplate(
+    input_variables=["ticket_subject", "ticket_body"],
+    template="""
+    Craft an initial response to the following ticket.
+
+    Ticket Subject: {ticket_subject}
+    Ticket Content: {ticket_body}
+
+    Respond only with a text containing the initial response to the customer.
+    """
+)
+openai_llm = ChatOpenAI(model="",
+                        api_key=settings.OPENAI_API_KEY,
+                        base_url=settings.API_PROXY_URL,
+                        max_tokens=100)
+response_chain = response_prompt | openai_llm
 
 
-def categorize_prioritize_ticket(ticket: Ticket) -> TicketClassified:
+async def categorize_prioritize_ticket(ticket: Ticket) -> TicketClassified:
     logger.info("Classify ticket by Anthropic llm")
     try:
         chain_input = {
@@ -48,7 +66,20 @@ def categorize_prioritize_ticket(ticket: Ticket) -> TicketClassified:
             "categories": enum2csv(TicketCategory, ", "),
             "priorities": enum2csv(TicketPriority, ", ")
         }
-        return chain.invoke(chain_input)
+        return await classify_chain.ainvoke(chain_input)
     except Exception as e:
         logger.error(f"Classify ticket {ticket.id} failed: {e}")
+        raise e
+
+
+async def craft_ticket_response(ticket: Ticket) -> str:
+    logger.info("Response to ticket with OpenAI llm")
+    try:
+        chain_input = {
+            "ticket_subject": ticket.subject,
+            "ticket_body": ticket.body
+        }
+        return await response_chain.ainvoke(chain_input)
+    except Exception as e:
+        logger.error(f"Response to ticket {ticket.id} failed: {e}")
         raise e
