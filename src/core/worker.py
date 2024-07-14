@@ -1,4 +1,3 @@
-import logging
 from typing import List
 from uuid import UUID
 
@@ -8,18 +7,19 @@ from rq.job import Job
 
 from src.core.ai import categorize_prioritize_ticket
 from src.core.config import settings
+from src.core.utils import setup_logger
 from src.models.database import SessionLocal
 from src.models.schemas import TicketStatus
 from src.models.ticket import get_ticket
 
 redis_conn = Redis.from_url(settings.REDIS_URL)
 queue = Queue(connection=redis_conn)
-logger = logging.getLogger(__name__)
+logger = setup_logger()
 
 
 # todo: get initial response through another ai provider in an async way
 def process_ticket(ticket_id: UUID):
-    logger.info(f"Processing ticket with id: {ticket_id}")
+    logger.info(f"Processing ticket {ticket_id}")
     db = SessionLocal()
     try:
         with db.begin():
@@ -41,6 +41,7 @@ def process_ticket(ticket_id: UUID):
             # revert ticket status
             with db.begin():
                 ticket.status = TicketStatus.SUBMITTED
+            logger.info(f"Revert ticket {ticket_id} to submitted status")
         except Exception as e:
             logger.error(f"Failed to revert ticket {ticket_id} to submitted status: {e}")
             raise
