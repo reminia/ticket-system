@@ -5,7 +5,7 @@ Rest api for a support ticket system including submit, query, process tickets.
 
 ## features
 
-* create ticket.
+* create ticket, ticket will be added to redis queue for LLM to process.
 * query ticket by ticket id.
 * assign ticket priority, category and initial response by AI providers automatically.
 * filter tickets by status, priority and category.
