@@ -29,6 +29,7 @@ AI proxy urls could be empty, set them if u access the api through a proxy.
 ## build & run
 
 * build: `poetry install && poetry build`.
+* lint: `poetry run flake8`.
 * run:
     - `poetry run uvicorn src.main:app`, server will start at `localhost:8000` by default.
     -  start rq worker: `poetry run rq worker -u redis://localhost:6379`

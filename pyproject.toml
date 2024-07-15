@@ -24,6 +24,8 @@ langchain-openai = "^0.1.16"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"
+flake8 = "^7.1.0"
+
 
 [build-system]
 requires = ["poetry-core"]

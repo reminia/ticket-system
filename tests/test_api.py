@@ -42,5 +42,3 @@ def test_get_non_exist_ticket():
     response = client.get(f"/v1/ticket/{ticket_id}")
     assert response.status_code == 404
     assert 'detail' in response.json()
-
-# def test_get

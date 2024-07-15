@@ -48,7 +48,7 @@ response_prompt = PromptTemplate(
     Ticket Subject: {ticket_subject}
     Ticket Content: {ticket_body}
 
-    Respond only with a text containing the initial response to the customer. 
+    Respond only with a text containing the initial response to the customer.
     Don't add any ending words like 'best regards 'in the response.
     """
 )
