@@ -24,6 +24,7 @@ Rest api for a support ticket system including submit, query, process tickets.
 * install redis using docker by `docker run --name my-redis -p 6379:6379 -d redis`.
 * install rq(redis queue) by `pip install rq`.
 * setup env variables, please refer to the [env](.env.example) file.
+AI proxy urls could be empty, set them if u access the api through a proxy.
 
 ## build & run
 
