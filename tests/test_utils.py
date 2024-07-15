@@ -10,8 +10,8 @@ def test_enum2csv():
 
 
 def test_setup_logger():
-    logger = setup_logger(__name__)
-    assert logger.level == logging.INFO
+    logger = setup_logger(__name__, logging.DEBUG)
+    assert logger.level == logging.DEBUG
 
     stream = StringIO()
     logger.handlers[0].stream = stream  # Redirect output to our string buffer
