@@ -35,3 +35,12 @@ def test_get_ticket():
     ticket_id = response.json()["ticket_id"]
     query_response = client.get("/v1/ticket/%s" % ticket_id)
     assert query_response.status_code == 200
+
+
+def test_get_non_exist_ticket():
+    ticket_id = "9f091a6b-bc82-4413-b448-35be137884d0"
+    response = client.get(f"/v1/ticket/{ticket_id}")
+    assert response.status_code == 404
+    assert 'detail' in response.json()
+
+# def test_get

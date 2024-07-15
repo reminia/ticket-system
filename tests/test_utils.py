@@ -10,8 +10,9 @@ def test_enum2csv():
 
 
 def test_setup_logger():
-    logger = setup_logger()
+    logger = setup_logger(__name__)
     assert logger.level == logging.INFO
+
     stream = StringIO()
     logger.handlers[0].stream = stream  # Redirect output to our string buffer
     message = "log message"
@@ -19,3 +20,5 @@ def test_setup_logger():
 
     log_output = stream.getvalue().strip()
     assert message in log_output
+    # assert logger name
+    assert "test_utils" in log_output
