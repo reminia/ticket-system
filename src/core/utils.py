@@ -8,7 +8,7 @@ def enum2csv(clazz: Type[Enum], sep: str = ',') -> str:
     return sep.join(words)
 
 
-def setup_logger(name: str = __name__, level: int = logging.INFO) -> logging.Logger:
+def setup_logger(name: str, level: int = logging.INFO) -> logging.Logger:
     logger = logging.getLogger(name)
     if not logger.handlers:
         handler = logging.StreamHandler()
