@@ -7,13 +7,14 @@ from sqlalchemy.orm import Session
 from src.core.worker import enqueue_tickets, enqueue_ticket
 from src.models import schemas, ticket
 from src.models.database import get_db
-from src.models.schemas import TicketStatus, TicketCategory, TicketPriority, PaginatedTickets, TicketProcess
+from src.models.schemas import TicketCreateResponse, PaginatedTickets, TicketProcess
+from src.models.schemas import TicketStatus, TicketCategory, TicketPriority
 from src.models.ticket import save_ticket, get_ticket as query_ticket, filter_ticket, filter_ticket_status
 
 router = APIRouter(prefix="/v1")
 
 
-@router.post("/ticket", response_model=schemas.TicketCreateResponse, status_code=201)
+@router.post("/ticket", response_model=TicketCreateResponse, status_code=201)
 def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
     """
     Create a ticket given ticket subject, body and customer email.
@@ -41,11 +42,9 @@ def create_ticket(data: schemas.TicketCreate, db: Session = Depends(get_db)):
     )
     save_ticket(db, db_ticket)
     enqueue_ticket(db_ticket.id)
-    return {
-        "ticket_id": db_ticket.id,
-        "status": "submitted",
-        "message": "Ticket submitted successfully and queued for processing"
-    }
+    return TicketCreateResponse(ticket_id=db_ticket.id,
+                                status=TicketStatus.SUBMITTED.value,
+                                message="Ticket submitted successfully and queued for processing")
 
 
 @router.get("/ticket/{ticket_id}", response_model=schemas.Ticket)
@@ -90,12 +89,10 @@ def get_tickets(status: Optional[TicketStatus] = None,
     - **tickets**: List of tickets.
     """
     tickets = filter_ticket(db, page, per_page, status, category, priority)
-    return {
-        "tickets": tickets,
-        "total": len(tickets),
-        "page": page,
-        "per_page": per_page
-    }
+    return PaginatedTickets(tickets=tickets,
+                            total=len(tickets),
+                            page=page,
+                            per_page=per_page)
 
 
 @router.post("/process", response_model=TicketProcess)
