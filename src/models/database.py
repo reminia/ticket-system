@@ -13,7 +13,7 @@ try:
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base = declarative_base()
 except SQLAlchemyError as e:
-    logger.error(f"Error connecting to the database: {str(e)}")
+    logger.error(f"Error connecting to the database: {e}")
     raise
 
 
@@ -22,7 +22,7 @@ def get_db() -> Session:
     try:
         yield db
     except SQLAlchemyError as e:
-        logger.error(f"Database error: {str(e)}")
+        logger.error(f"Database error: {e}")
         raise
     finally:
         db.close()
