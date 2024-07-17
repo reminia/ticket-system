@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str
     ANTHROPIC_PROXY_URL: str = Field("")
     OPENAI_PROXY_URL: str = Field("")
+    ANTHROPIC_MODEL: str = Field("claude-3-5-sonnet")
+    OPENAI_MODEL: str = Field("gpt-4o")
 
     model_config = SettingsConfigDict(
         env_file=".env",

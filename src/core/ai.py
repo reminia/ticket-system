@@ -33,7 +33,7 @@ classify_prompt = PromptTemplate(
     """
 )
 
-anthropic_llm = CustomChatAnthropic(model="claude-3-5-sonnet",
+anthropic_llm = CustomChatAnthropic(model=settings.ANTHROPIC_MODEL,
                                     api_key=settings.ANTHROPIC_API_KEY,
                                     base_url=settings.ANTHROPIC_PROXY_URL,
                                     max_tokens=100)
@@ -52,7 +52,7 @@ response_prompt = PromptTemplate(
     Don't add any ending words like 'best regards 'in the response.
     """
 )
-openai_llm = ChatOpenAI(model="gpt-4o",
+openai_llm = ChatOpenAI(model=settings.OPENAI_MODEL,
                         api_key=settings.OPENAI_API_KEY,
                         base_url=settings.OPENAI_PROXY_URL,
                         max_tokens=100)
