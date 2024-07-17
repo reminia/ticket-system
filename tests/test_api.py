@@ -12,14 +12,14 @@ from src.models.ticket import Ticket
 client = TestClient(app)
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def mock_db_session(mocker):
     # Create a mock DB session
     return mocker.Mock()
 
 
 @pytest.fixture(autouse=True)
-def override_get_db(mock_db_session):
+def override_get_db():
     # Override the get_db dependency to return the mock DB session
     app.dependency_overrides[get_db] = lambda: mock_db_session
 
@@ -59,7 +59,7 @@ def test_create_ticket(mocker):
     assert "message" in data
 
 
-def test_get_ticket(mocker, mock_ticket, mock_db_session):
+def test_get_ticket(mocker, mock_ticket):
     get_ticket = mocker.patch("src.api.v1.ticket_api.query_ticket")
     get_ticket.return_value = mock_ticket
 
@@ -68,7 +68,7 @@ def test_get_ticket(mocker, mock_ticket, mock_db_session):
     get_ticket.assert_called_once_with(mock_db_session, mock_ticket.id)
 
 
-def test_get_non_exist_ticket(mocker, mock_db_session):
+def test_get_non_exist_ticket(mocker):
     get_ticket = mocker.patch("src.api.v1.ticket_api.query_ticket")
     get_ticket.return_value = None
 
@@ -79,7 +79,7 @@ def test_get_non_exist_ticket(mocker, mock_db_session):
     assert 'detail' in response.json()
 
 
-def test_process_ticket(mocker, mock_ticket, mock_db_session):
+def test_process_ticket(mocker, mock_ticket):
     mock_filter = mocker.patch("src.api.v1.ticket_api.filter_ticket_status")
     mock_filter.return_value = [mock_ticket, mock_ticket]
 
