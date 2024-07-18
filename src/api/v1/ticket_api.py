@@ -9,7 +9,8 @@ from src.models import schemas, ticket
 from src.models.database import get_db
 from src.models.schemas import TicketCreateResponse, PaginatedTickets, TicketProcess
 from src.models.schemas import TicketStatus, TicketCategory, TicketPriority
-from src.models.ticket import save_ticket, get_ticket as query_ticket, filter_ticket, filter_ticket_status
+from src.models.ticket import save_ticket, get_ticket as query_ticket
+from src.models.ticket import filter_ticket, filter_ticket_status
 
 router = APIRouter(prefix="/v1")
 

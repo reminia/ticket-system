@@ -1,7 +1,8 @@
 # ticket system
 ![CI](https://github.com/reminia/ticket-system/actions/workflows/ci.yml/badge.svg)
 
-Rest api for a support ticket system including submit, query, process tickets.
+Rest api for a support ticket system including submit, query, process tickets. <br/>
+It leverages LLM model to categorize, priority and create initial response to tickets.
 
 ## features
 
