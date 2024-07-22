@@ -5,8 +5,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 from src.core.config import settings
+from src.core.utils import setup_logger
 
-logger = logging.getLogger(__name__)
+logger = setup_logger(__name__)
 
 try:
     engine = create_engine(settings.DATABASE_URL, connect_args={"check_same_thread": False})
