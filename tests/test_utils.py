@@ -21,4 +21,4 @@ def test_setup_logger():
     log_output = stream.getvalue().strip()
     assert message in log_output
     # assert logger name
-    assert "test_utils" in log_output
+    assert __name__ in log_output
