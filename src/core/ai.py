@@ -21,7 +21,7 @@ classify_prompt = PromptTemplate(
     Ticket Subject: {ticket_subject}
     Ticket Content: {ticket_body}
 
-    Respond with a JSON object in the following format:
+    Respond only with a JSON object in the following format without any extra words:
     {{
         "category": "Category name",
         "category_confidence": 0.0,
@@ -75,7 +75,7 @@ async def categorize_prioritize_ticket(ticket: Ticket) -> TicketClassified:
 
 
 async def craft_ticket_response(ticket: Ticket) -> str:
-    logger.info("Response to ticket with OpenAI llm")
+    logger.info("Reply ticket with OpenAI llm")
     try:
         chain_input = {
             "ticket_subject": ticket.subject,
