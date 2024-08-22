@@ -20,6 +20,7 @@ requests = "^2.32.3"
 langchain = "^0.2.7"
 langchain-anthropic = "^0.1.20"
 langchain-openai = "^0.1.16"
+socksio = "^1.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
