@@ -1,16 +1,16 @@
 # ticket system
 ![CI](https://github.com/reminia/ticket-system/actions/workflows/ci.yml/badge.svg)
 
-Rest api for a support ticket system including submit, query, process tickets. <br/>
-It leverages LLM model to categorize, priority and create initial response to tickets.
+Rest api for a support ticket system including create, query and process tickets. <br/>
+It leverages LLM models to categorize, priority and respond to tickets.
 
 ## features
 
-* create ticket, ticket will be added to redis queue for LLM to process.
+* create ticket, new ticket will be added to redis queue for processing.
 * query ticket by ticket id.
 * assign ticket priority, category and initial response by AI providers automatically.
 * filter tickets by status, priority and category.
-* manually trigger ticket processing in queue.
+* trigger ticket processing manually.
 
 ## tech stack
 
@@ -18,7 +18,7 @@ It leverages LLM model to categorize, priority and create initial response to ti
 * rq for task queue
 * sqlalchemy and pydantic for ORM & data validation
 * sqlite as database
-* langchain for LLM
+* langchain for LLM(anthropic or openai)processing
 
 ## setup
 

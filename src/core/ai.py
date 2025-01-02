@@ -1,10 +1,10 @@
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
+from langchain_anthropic import ChatAnthropic
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 
 from src.core.config import settings
-from src.core.custom_anthropic import CustomChatAnthropic
 from src.core.utils import enum2csv, setup_logger
 from src.models.schemas import TicketClassified, TicketCategory, TicketPriority
 from src.models.ticket import Ticket
@@ -33,10 +33,10 @@ classify_prompt = PromptTemplate(
     """
 )
 
-anthropic_llm = CustomChatAnthropic(model=settings.ANTHROPIC_MODEL,
-                                    api_key=settings.ANTHROPIC_API_KEY,
-                                    base_url=settings.ANTHROPIC_PROXY_URL,
-                                    max_tokens=100)
+anthropic_llm = ChatAnthropic(model=settings.ANTHROPIC_MODEL,
+                              api_key=settings.ANTHROPIC_API_KEY,
+                              base_url=settings.ANTHROPIC_PROXY_URL,
+                              max_tokens=100)
 output_parser = PydanticOutputParser(pydantic_object=TicketClassified)
 classify_chain = classify_prompt | anthropic_llm | output_parser
 
