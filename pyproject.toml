@@ -21,6 +21,8 @@ langchain = "^0.2.7"
 langchain-anthropic = "^0.1.20"
 langchain-openai = "^0.1.16"
 socksio = "^1.0.0"
+# transitive dep, fix security warn
+h11 = "0.16.0"
 
 
 [tool.poetry.group.dev.dependencies]
